@@ -18,15 +18,16 @@ export default function Home() {
   let status: StatusType = 'Tancat';
   let theme = 'closed';
   let textMode = 'text-white';
+  let counterColor = 'text-white';
 
   if (isOpen) {
     if (currentCount >= maxCapacity) {
       status = 'Ple';
       theme = 'full';
+      counterColor = 'text-red-500 drop-shadow-[0_0_25px_rgba(239,68,68,0.6)]';
     } else if (currentCount >= 15) {
       status = 'Quasi ple';
       theme = 'almost';
-      textMode = 'text-white';
     } else {
       status = 'Lliure';
       theme = 'free';
@@ -116,7 +117,7 @@ export default function Home() {
             {isOpen ? (
               <>
                 <p className="opacity-70 text-[9px] sm:text-xs font-semibold uppercase tracking-widest shadow-sm">Aforament Actual</p>
-                <div className="scale-90 sm:scale-100 drop-shadow-lg origin-center mt-1">
+                <div className={`scale-90 sm:scale-100 origin-center mt-1 transition-colors duration-1000 ${counterColor}`}>
                   <CounterDisplay currentCount={currentCount} maxCapacity={maxCapacity} />
                 </div>
                 <p className="opacity-60 text-[10px] sm:text-xs font-medium -mt-1">famílies jugant</p>
