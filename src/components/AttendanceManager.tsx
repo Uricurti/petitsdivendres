@@ -172,23 +172,40 @@ export const AttendanceManager: React.FC<AttendanceManagerProps> = ({ isOpen, on
                   const timeString = new Date(att.check_in_time).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' });
                   
                   return (
-                    <div 
+                    <motion.div 
                       key={att.id}
-                      className="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-navy/5"
+                      layout
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95, height: 0 }}
+                      className="relative overflow-hidden rounded-2xl bg-rose-500 shadow-sm"
                     >
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-navy text-lg">{childName}</span>
-                        <span className="text-xs text-navy/50 font-medium">Hora check-in: {timeString}</span>
+                      <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-center text-white font-bold opacity-80">
+                        <X size={20} className="mr-1" />
+                        Sortir
                       </div>
-                      
-                      <button 
-                        onClick={() => handleRemove(att.id)}
-                        className="px-4 py-2 rounded-xl flex items-center space-x-2 bg-rose-50 hover:bg-rose-100 text-rose-500 font-semibold text-sm transition-colors border border-rose-100"
+                      <motion.div 
+                        drag="x"
+                        dragConstraints={{ left: -100, right: 0 }}
+                        dragElastic={0.2}
+                        onDragEnd={(e, info) => {
+                          if (info.offset.x < -80) {
+                            handleRemove(att.id);
+                          }
+                        }}
+                        className="bg-white p-4 rounded-2xl flex items-center justify-between border border-navy/5 relative z-10 w-full touch-pan-y"
                       >
-                        <X size={16} />
-                        <span>Marxa</span>
-                      </button>
-                    </div>
+                        <div className="flex flex-col">
+                          <span className="font-semibold text-navy text-lg">{childName}</span>
+                          <span className="text-xs text-navy/50 font-medium">Hora check-in: {timeString}</span>
+                        </div>
+                        
+                        <div className="px-3 py-1.5 rounded-lg flex items-center space-x-2 bg-slate-50 text-navy/40 font-medium text-xs border border-transparent">
+                          <span className="hidden sm:inline">&larr; Llisca per sortir</span>
+                          <span className="sm:hidden">&larr; Llisca</span>
+                        </div>
+                      </motion.div>
+                    </motion.div>
                   );
                 })}
               </div>

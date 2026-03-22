@@ -16,20 +16,32 @@ export default function Home() {
   const [stats, setStats] = useState<any>(null);
 
   let status: StatusType = 'Tancat';
-  let screenBg = 'bg-black/60 backdrop-blur-sm'; 
+  let theme = 'closed';
+  let textMode = 'text-white';
 
   if (isOpen) {
     if (currentCount >= maxCapacity) {
       status = 'Ple';
-      screenBg = 'bg-rose-500/80 backdrop-blur-md text-white';
+      theme = 'full';
     } else if (currentCount >= 15) {
       status = 'Quasi ple';
-      screenBg = 'bg-amber-400/80 backdrop-blur-md text-black';
+      theme = 'almost';
+      textMode = 'text-black';
     } else {
       status = 'Lliure';
-      screenBg = 'bg-emerald-500/80 backdrop-blur-md text-white';
+      theme = 'free';
     }
   }
+
+  const getMeshColors = () => {
+    switch (theme) {
+      case 'full': return ['bg-rose-500', 'bg-rose-700', 'bg-red-500'];
+      case 'almost': return ['bg-amber-400', 'bg-orange-400', 'bg-amber-500'];
+      case 'free': return ['bg-emerald-400', 'bg-teal-500', 'bg-emerald-500'];
+      default: return ['bg-slate-800', 'bg-navy', 'bg-slate-700'];
+    }
+  };
+  const [c1, c2, c3] = getMeshColors();
 
   useEffect(() => {
     const fetchSessionAndStats = async () => {
@@ -72,8 +84,13 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="h-[100dvh] w-full flex flex-col p-2 sm:p-4 overflow-hidden text-white relative">
-      <div className={`absolute inset-0 z-[-1] transition-colors duration-700 ${screenBg}`} />
+    <main className={`h-[100dvh] w-full flex flex-col p-2 sm:p-4 overflow-hidden relative transition-colors duration-1000 ${textMode}`}>
+      <div className="absolute inset-0 z-[-1] overflow-hidden bg-black">
+        <div className={`mesh-blob mesh-1 w-[60vh] h-[60vh] -top-[10%] -left-[10%] ${c1} transition-colors duration-1000`} />
+        <div className={`mesh-blob mesh-2 w-[50vh] h-[50vh] top-[20%] -right-[10%] ${c2} transition-colors duration-1000`} />
+        <div className={`mesh-blob mesh-3 w-[70vh] h-[70vh] -bottom-[20%] left-[10%] ${c3} transition-colors duration-1000`} />
+        <div className="absolute inset-0 bg-black/10 backdrop-blur-[60px]" />
+      </div>
 
       {/* Header */}
       <div className="w-full flex-none flex justify-between items-center z-20">
