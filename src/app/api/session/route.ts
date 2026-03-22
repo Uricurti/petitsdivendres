@@ -25,6 +25,20 @@ export async function POST(request: Request) {
 
   try {
     if (action === 'open') {
+      const { data: existingSession } = await supabase.database
+        .from('sessions')
+        .select('id')
+        .eq('date', today)
+        .single();
+
+      if (existingSession) {
+        await supabase.database
+          .from('attendances')
+          .update({ check_out_time: new Date().toISOString() })
+          .eq('session_id', existingSession.id)
+          .is('check_out_time', null);
+      }
+
       const { data, error } = await supabase.database
         .from('sessions')
         .upsert(
@@ -56,10 +70,10 @@ export async function POST(request: Request) {
 
       // 1. Marcar la sortida de tots els nens que encara estiguin dins
       await supabase.database
-        .from('attendance')
-        .update({ checked_out_at: new Date().toISOString() })
+        .from('attendances')
+        .update({ check_out_time: new Date().toISOString() })
         .eq('session_id', session.id)
-        .is('checked_out_at', null);
+        .is('check_out_time', null);
 
       // 2. Tancar sessió i posar el comptador a zero
       const { data, error } = await supabase.database
