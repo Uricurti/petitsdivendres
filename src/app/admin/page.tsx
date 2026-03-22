@@ -94,7 +94,7 @@ export default function AdminDashboard() {
       <div className="w-full max-w-6xl flex flex-none justify-between items-center mb-4 sm:mb-8 z-10">
         <div className="flex items-center space-x-3">
           <Logo className="w-8 h-8 sm:w-10 sm:h-10" />
-          <h1 className="text-lg sm:text-xl font-bold text-navy hidden sm:block drop-shadow-sm">Petits Divendres · Admin</h1>
+          <h1 className="text-lg sm:text-xl font-bold text-navy hidden sm:block drop-shadow-sm">Admin</h1>
         </div>
         
         <div className="flex items-center space-x-3">
