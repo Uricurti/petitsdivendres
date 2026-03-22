@@ -115,7 +115,7 @@ export default function AdminDashboard() {
             <h2 className="text-navy font-semibold text-lg w-full text-center mb-2 drop-shadow-sm">Estat Global</h2>
             <StatusBadge status={status} />
             <div className="w-full pt-4 drop-shadow-sm">
-              <CounterDisplay currentCount={currentCount} maxCapacity={maxCapacity} />
+              <CounterDisplay currentCount={isOpen ? currentCount : 0} maxCapacity={maxCapacity} />
             </div>
             
             <div className="w-full border-t border-navy/10 pt-6 mt-4">
