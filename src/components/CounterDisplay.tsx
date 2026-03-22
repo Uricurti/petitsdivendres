@@ -24,11 +24,12 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
   const isGoingUp = currentCount >= prevCount;
 
   return (
-    <div className="relative flex items-center justify-center p-2 text-current">
+    <div className="relative flex items-center justify-center p-2 text-current w-[200px] h-[200px] sm:w-[220px] sm:h-[220px]">
       <svg
-        height={radius * 2}
-        width={radius * 2}
-        className="transform -rotate-90 drop-shadow-md"
+        height="100%"
+        width="100%"
+        viewBox={`0 0 ${radius * 2} ${radius * 2}`}
+        className="absolute inset-0 transform -rotate-90 drop-shadow-md overflow-visible"
       >
         <circle
           stroke="currentColor"
@@ -75,8 +76,9 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
         })}
       </svg>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <div className="flex items-baseline justify-center overflow-hidden h-[70px] sm:h-[90px] mt-2">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* Main Number - Dead Center */}
+        <div className="flex items-center justify-center overflow-hidden h-[80px] sm:h-[100px]">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={currentCount}
@@ -84,13 +86,17 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: isGoingUp ? -50 : 50, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="text-6xl sm:text-7xl font-black tracking-tighter tabular-nums leading-none"
+              className="text-[4.5rem] sm:text-[5.5rem] font-black tracking-tighter tabular-nums leading-none"
             >
               {currentCount}
             </motion.span>
           </AnimatePresence>
         </div>
-        <span className="text-lg sm:text-xl font-bold opacity-50 mt-1">/ {maxCapacity}</span>
+
+        {/* Subtext - Pushed to the bottom inner edge */}
+        <div className="absolute bottom-[16%] sm:bottom-[18%] w-full flex justify-center">
+          <span className="text-xl sm:text-2xl font-bold opacity-40">/ {maxCapacity}</span>
+        </div>
       </div>
     </div>
   );
