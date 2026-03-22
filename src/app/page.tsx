@@ -28,9 +28,11 @@ export default function Home() {
     } else if (currentCount >= 15) {
       status = 'Quasi ple';
       theme = 'almost';
+      counterColor = 'text-amber-400 drop-shadow-[0_0_25px_rgba(251,191,36,0.6)]';
     } else {
       status = 'Lliure';
       theme = 'free';
+      counterColor = 'text-emerald-400 drop-shadow-[0_0_25px_rgba(52,211,153,0.6)]';
     }
   }
 
