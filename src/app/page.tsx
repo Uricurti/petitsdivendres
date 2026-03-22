@@ -26,7 +26,7 @@ export default function Home() {
     } else if (currentCount >= 15) {
       status = 'Quasi ple';
       theme = 'almost';
-      textMode = 'text-black';
+      textMode = 'text-white';
     } else {
       status = 'Lliure';
       theme = 'free';
