@@ -86,7 +86,7 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: isGoingUp ? -50 : 50, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="text-[4.5rem] sm:text-[5.5rem] font-black tracking-tighter tabular-nums leading-none"
+              className="text-[4.5rem] sm:text-[5.5rem] font-black tracking-tighter tabular-nums leading-none text-white drop-shadow-md"
             >
               {currentCount}
             </motion.span>
@@ -95,7 +95,7 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
 
         {/* Subtext - Pushed to the bottom inner edge */}
         <div className="absolute bottom-[16%] sm:bottom-[18%] w-full flex justify-center">
-          <span className="text-xl sm:text-2xl font-bold opacity-40">/ {maxCapacity}</span>
+          <span className="text-xl sm:text-2xl font-bold text-white/50">/ {maxCapacity}</span>
         </div>
       </div>
     </div>

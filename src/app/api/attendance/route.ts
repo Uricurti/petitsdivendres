@@ -64,7 +64,14 @@ export async function POST(request: Request) {
       .insert([{ session_id: session.id, child_id: childId }]);
     if (attErr) throw attErr;
 
-    const newCount = session.current_count + 1;
+    const { count, error: countErr } = await supabase.database.from('attendances')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', session.id)
+      .is('check_out_time', null);
+      
+    if (countErr) throw countErr;
+    const newCount = count || 0;
+
     await supabase.database.from('sessions')
       .update({ current_count: newCount, updated_at: new Date().toISOString() })
       .eq('id', session.id);
@@ -101,7 +108,14 @@ export async function PATCH(request: Request) {
       
     if (outErr) throw outErr;
 
-    const newCount = Math.max(0, session.current_count - 1);
+    const { count, error: countErr } = await supabase.database.from('attendances')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', session.id)
+      .is('check_out_time', null);
+
+    if (countErr) throw countErr;
+    const newCount = count || 0;
+
     await supabase.database.from('sessions')
       .update({ current_count: newCount, updated_at: new Date().toISOString() })
       .eq('id', session.id);
