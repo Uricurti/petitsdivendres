@@ -74,8 +74,11 @@ export default function AdminDashboard() {
         body: JSON.stringify({ action: isOpen ? 'close' : 'open' })
       });
       if (res.ok) {
-        setIsOpen(!isOpen);
-        if (!isOpen) setCurrentCount(0);
+        const data = await res.json();
+        if (data.session) {
+          setIsOpen(data.session.is_open);
+          setCurrentCount(data.session.current_count);
+        }
       }
     } finally {
       setLoadingAction(false);

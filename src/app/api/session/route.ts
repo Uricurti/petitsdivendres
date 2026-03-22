@@ -54,9 +54,21 @@ export async function POST(request: Request) {
       const { data: session } = await supabase.database.from('sessions').select('*').eq('date', today).single();
       if (!session) return NextResponse.json({ error: 'Session not found' }, { status: 404 });
 
+      // 1. Marcar la sortida de tots els nens que encara estiguin dins
+      await supabase.database
+        .from('attendance')
+        .update({ checked_out_at: new Date().toISOString() })
+        .eq('session_id', session.id)
+        .is('checked_out_at', null);
+
+      // 2. Tancar sessió i posar el comptador a zero
       const { data, error } = await supabase.database
         .from('sessions')
-        .update({ is_open: false, closed_at: new Date().toISOString() })
+        .update({ 
+          is_open: false, 
+          closed_at: new Date().toISOString(),
+          current_count: 0 
+        })
         .eq('id', session.id)
         .select()
         .single();
@@ -67,7 +79,7 @@ export async function POST(request: Request) {
         session_id: session.id,
         event_type: 'session_close',
         count_before: session.current_count,
-        count_after: session.current_count
+        count_after: 0
       }]);
 
       return NextResponse.json({ session: data });
