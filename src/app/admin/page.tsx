@@ -8,6 +8,7 @@ import { CounterDisplay } from '@/components/CounterDisplay';
 import { AttendanceManager } from '@/components/AttendanceManager';
 import { AdminStats } from '@/components/AdminStats';
 import { Logo } from '@/components/Logo';
+import { AdminAnalytics } from '@/components/AdminAnalytics';
 import { LogOut, Play, Square } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -142,9 +143,10 @@ export default function AdminDashboard() {
           />
         </div>
 
-        {/* Col 3: Statistics */}
-        <div className="lg:col-span-1 lg:pl-4">
+        {/* Col 3: Statistics & Analytics */}
+        <div className="lg:col-span-1 lg:pl-4 flex flex-col space-y-6">
           <AdminStats />
+          <AdminAnalytics />
         </div>
 
       </div>
