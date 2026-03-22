@@ -72,7 +72,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-[100dvh] w-full flex flex-col p-3 sm:p-6 overflow-y-auto text-white relative">
+    <main className="h-[100dvh] w-full flex flex-col p-2 sm:p-4 overflow-hidden text-white relative">
       <div className={`absolute inset-0 z-[-1] transition-colors duration-700 ${screenBg}`} />
 
       {/* Header */}
@@ -85,27 +85,38 @@ export default function Home() {
 
       {/* Compressed Core */}
       <div className="flex-1 w-full max-w-sm mx-auto flex flex-col justify-center gap-y-3 z-10">
-        <div className="w-full text-current bg-white/30 backdrop-blur-xl px-4 py-5 sm:p-8 rounded-[1.5rem] shadow-xl border border-white/40 flex flex-col items-center gap-y-3">
+        <div className="w-full text-current bg-white/30 backdrop-blur-xl px-4 py-5 sm:p-7 rounded-[1.5rem] shadow-xl border border-white/40 flex flex-col items-center gap-y-3 transition-all duration-500">
           <div className="text-center">
-            <h1 className="font-extrabold text-xl sm:text-3xl tracking-tight leading-none drop-shadow-sm">Estat de l'espai</h1>
-            <p className="opacity-80 text-[9px] sm:text-sm font-semibold uppercase tracking-widest leading-tight mt-1">Petits Divendres</p>
+            <h1 className="font-extrabold text-xl sm:text-2xl tracking-tight leading-none drop-shadow-sm">Estat de l'espai</h1>
+            <p className="opacity-80 text-[9px] sm:text-xs font-semibold uppercase tracking-widest leading-tight mt-1">Petits Divendres</p>
           </div>
 
-          <div className="scale-75 sm:scale-100 origin-center -my-2 drop-shadow-md">
+          <div className="scale-75 sm:scale-90 origin-center -my-2 drop-shadow-md">
             <StatusBadge status={status} />
           </div>
 
-          <div className="w-full flex flex-col items-center">
-            <p className="opacity-70 text-[9px] sm:text-xs font-semibold uppercase tracking-widest shadow-sm">Aforament Actual</p>
-            <div className="scale-90 sm:scale-110 drop-shadow-lg origin-center mt-1">
-              <CounterDisplay currentCount={currentCount} maxCapacity={maxCapacity} />
-            </div>
-            <p className="opacity-60 text-[10px] sm:text-xs font-medium -mt-1">famílies</p>
-            
-            {lastUpdated && (
-              <p className="text-[9px] sm:text-xs opacity-50 font-medium px-3 py-0.5 mt-2 bg-black/5 rounded-full">
-                {lastUpdated.toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' })}
-              </p>
+          <div className="w-full flex flex-col items-center min-h-[120px] justify-center text-center">
+            {isOpen ? (
+              <>
+                <p className="opacity-70 text-[9px] sm:text-xs font-semibold uppercase tracking-widest shadow-sm">Aforament Actual</p>
+                <div className="scale-90 sm:scale-100 drop-shadow-lg origin-center mt-1">
+                  <CounterDisplay currentCount={currentCount} maxCapacity={maxCapacity} />
+                </div>
+                <p className="opacity-60 text-[10px] sm:text-xs font-medium -mt-1">famílies jugant</p>
+                
+                {lastUpdated && (
+                  <p className="text-[9px] sm:text-xs opacity-50 font-medium px-3 py-0.5 mt-2 bg-black/5 rounded-full">
+                    Actualitzat: {lastUpdated.toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center py-4 space-y-2 animate-in fade-in zoom-in duration-500">
+                <p className="text-base sm:text-xl font-bold leading-tight max-w-[200px] drop-shadow-sm">
+                  Petits Divendres està tancat en aquests moments.
+                </p>
+                <p className="opacity-60 text-[10px] sm:text-xs font-medium">T'esperem el proper divendres!</p>
+              </div>
             )}
           </div>
         </div>
