@@ -1,0 +1,432 @@
+Petits Divendres
+Document de Requisits del Producte (PRD)
+Aplicació web d'aforament en temps real
+Versió 2.0  ·  Març 2026
+Camp
+Detall
+Producte
+Petits Divendres — Webapp
+Estat
+En definició
+Aforament màxim
+20 famílies
+Tecnologia
+Next.js 14 + Supabase + Vercel
+Repositori
+GitHub
+Desplegament
+Vercel (CD automàtic des de GitHub)
+Audiència
+Famílies (pública) + Recepcionistes (admin privat)
+
+
+1. Context i problema
+Petits Divendres és un espai de joc i trobada per a infants de 0 a 3 anys que funciona els divendres de 16:30 a 19:00 h al Casal. L'aforament màxim és de 20 famílies i, quan l'espai és ple, les famílies han d'esperar a la porta.
+
+Problema actual:
+	•	Les famílies fan el trajecte sense saber si hi ha espai disponible.
+	•	Quan arriben i l'aforament és complet (20 famílies), han d'esperar o marxar.
+	•	No hi ha cap canal digital que informi de l'estat en temps real.
+	•	El personal de recepció rep consultes repetitives per telèfon.
+
+Solució proposada:
+Una webapp pública i lleugera que mostra l'aforament actual en temps real. Qualsevol persona pot consultar-la sense registre. El personal de recepció accedeix a un panel d'administració protegit per contrasenya per gestionar el comptador.
+
+2. Objectius del producte
+2.1 Objectius principals (MVP)
+	•	Mostrar l'aforament actual en temps real (famílies presents / 20 màxim).
+	•	Permetre a les recepcionistes accedir al panel admin amb contrasenya.
+	•	Registrar cada entrada i sortida de família a Supabase amb timestamp.
+	•	Funcionar correctament en dispositius mòbils (iOS i Android).
+	•	Desplegament públic a Vercel, accessible sense instal·lació ni registre per a les famílies.
+
+2.2 Objectius secundaris (post-MVP)
+	•	Consultar l'historial d'aforament de sessions anteriors.
+	•	Generar gràfiques d'ocupació per franja horària i per dia.
+	•	Mostrar el calendari de dates obertes i tancaments (Setmana Santa, etc.).
+
+2.3 Fora d'abast (v1.0)
+	•	Sistema de reserves o cues virtuals.
+	•	Notificacions push quan queda espai.
+	•	Gestió de pagaments o abonaments.
+	•	Múltiples comptes d'administrador amb rols diferenciats.
+
+3. Usuaris objectiu
+Perfil
+Necessitat principal
+Accés
+Família (pare/mare/familiar)
+Saber si hi ha lloc abans de sortir de casa
+Vista pública — sense login
+Recepcionista del casal
+Registrar entrades i sortides de famílies
+Panel admin — amb contrasenya
+Coordinadora del casal
+Consultar dades d'ocupació per planificar
+Panel admin — amb contrasenya
+
+4. Accés i autenticació
+4.1 Vista pública (sense login)
+Tothom pot accedir a la pàgina principal i veure l'aforament en temps real sense cap registre ni contrasenya. L'URL és pública i compartible per WhatsApp, email o qualsevol canal.
+
+4.2 Botó d'accés admin
+A la pàgina principal hi haurà un botó discret d'accés al panel d'administració (per exemple, a la cantonada inferior). En fer-hi clic, redirigeix a la pàgina de login.
+
+4.3 Login de recepcionistes
+El panel d'administració és accessible des de /admin/login. El sistema demana una contrasenya única (no cal nom d'usuari). Si la contrasenya és correcta, es genera una cookie de sessió segura (httpOnly) i es redirigeix al panel d'administració. Si és incorrecta, es mostra un missatge d'error.
+
+Requisits de seguretat del login:
+	•	La contrasenya s'emmagatzema com a variable d'entorn al servidor (ADMIN_PASSWORD), mai al codi.
+	•	La cookie de sessió caduca passades 8 hores (durada màxima d'una jornada laboral).
+	•	Després de 5 intents fallits, el formulari es bloqueja 5 minuts.
+	•	La ruta /admin redirigeix a /admin/login si no hi ha sessió activa.
+	•	El botó de logout destrueix la cookie i redirigeix a la pàgina principal.
+
+5. Pantalles i funcionalitats
+5.1 Vista pública — Aforament en directe
+Accessible per tothom sense registre. URL directa i compartible.
+
+Continguts obligatoris:
+	•	Indicador visual d'estat (semàfor): Lliure · Quasi ple · Ple · Tancat
+	•	Comptador numèric gran: X de 20 famílies
+	•	Hora de l'última actualització
+	•	Indicador de si la sessió és oberta o tancada
+	•	Botó discret d'accés al panel admin
+
+Lògica del semàfor (aforament màxim: 20 famílies):
+Estat
+Condició
+Color
+Tancat
+Fora d'horari o sessió no iniciada per la recepció
+Gris
+Lliure
+0 – 13 famílies (menys del 70%)
+Verd
+Quasi ple
+14 – 19 famílies (70% – 99%)
+Taronja
+Ple
+20 famílies (100%)
+Vermell
+
+5.2 Vista pública — Informació pràctica
+	•	Horari: divendres de 16:30 a 19:00 h
+	•	Aforament màxim: 20 famílies
+	•	Preus: tiquet puntual 4,24 €  ·  5 sessions 16,94 €  ·  10 sessions 33,88 €
+	•	Descompte del 15% per a famílies monoparentals i nombroses
+	•	Dates de tancament: vacances de Setmana Santa i trimestres
+	•	Normativa d'ús (enllaç extern)
+
+5.3 Pàgina de login (/admin/login)
+	•	Camp de contrasenya (tipus password)
+	•	Botó d'accedir
+	•	Missatge d'error si la contrasenya és incorrecta
+	•	Bloqueig temporal després de 5 intents fallits
+	•	Disseny net i centrat, sense revelar que existeix un usuari admin
+
+5.4 Panel d'administració (/admin)
+Accessible només amb sessió activa. Si no hi ha sessió, redirigeix automàticament a /admin/login.
+
+Funcions disponibles:
+	•	Obrir sessió del dia (activa el semàfor i registra opened_at a Supabase)
+	•	Botó gran + Entra família (incrementa el comptador, registra l'event a capacity_log)
+	•	Botó gran − Surt família (decrementa el comptador, registra l'event a capacity_log, mínim 0)
+	•	El botó + es desactiva quan s'arriba a 20 famílies
+	•	Correcció manual del comptador (si cal ajustar per error)
+	•	Tancar sessió del dia (posa el semàfor en gris i registra closed_at)
+	•	Botó de logout (destrueix la cookie i redirigeix a la pàgina principal)
+
+Requisits de UX del panel:
+	•	Botons molt grans, accessibles amb un sol toc (mínim 64px d'alçada).
+	•	Confirmació visual immediata: el comptador s'actualitza a l'instant.
+	•	El comptador actual sempre visible i prominent.
+	•	No requereix recarregar la pàgina per veure canvis.
+
+6. Registre d'events i historial
+Cada acció de les recepcionistes queda registrada a Supabase. Això permet consultar l'historial de qualsevol sessió i generar gràfiques d'ocupació en el futur.
+
+Events registrats:
+Event
+Quan es dispara
+Dades guardades
+session_open
+Recepcionista obre la sessió
+session_id, timestamp, admin
+family_in
+Botó + Entra família
+session_id, timestamp, count resultant
+family_out
+Botó − Surt família
+session_id, timestamp, count resultant
+count_correction
+Correcció manual del comptador
+session_id, timestamp, valor anterior, valor nou
+session_close
+Recepcionista tanca la sessió
+session_id, timestamp, count final
+
+Amb aquest historial es poden generar estadístiques com: aforament màxim assolit per sessió, franja horària de més afluència, tendència d'assistència per trimestre, etc.
+
+7. Arquitectura tècnica
+7.1 Stack tecnològic
+Capa
+Tecnologia
+Frontend
+Next.js 14 (App Router) + Tailwind CSS
+Backend / API
+Next.js API Routes (serverless functions)
+Base de dades
+Supabase (PostgreSQL) + Realtime subscriptions
+Autenticació admin
+Contrasenya única via variable d'entorn + cookie httpOnly
+Hosting / CD
+Vercel (deploy automàtic des de GitHub)
+Repositori
+GitHub
+Editor
+Antigravity (fork de VS Code)
+
+7.2 Model de dades (Supabase)
+Taula: sessions
+Camp
+Tipus
+Descripció
+id
+uuid (PK)
+Identificador únic de la sessió
+date
+date
+Data de la sessió (divendres)
+is_open
+boolean
+Si la sessió és activa ara
+current_count
+integer
+Famílies presents en aquest moment
+max_capacity
+integer
+Aforament màxim (20 per defecte)
+opened_at
+timestamptz
+Hora en que la recepció obre la sessió
+closed_at
+timestamptz
+Hora en que la recepció tanca la sessió
+updated_at
+timestamptz
+Última actualització del comptador
+
+Taula: capacity_log (registre de cada event)
+Camp
+Tipus
+Descripció
+id
+uuid (PK)
+Identificador únic
+session_id
+uuid (FK → sessions)
+Sessió a la que pertany
+event_type
+text
+Tipus: family_in / family_out / correction / session_open / session_close
+count_before
+integer
+Comptador abans de l'event
+count_after
+integer
+Comptador després de l'event
+recorded_at
+timestamptz
+Timestamp exacte de l'event
+
+7.3 Temps real
+La vista pública s'actualitza automàticament sense recarregar gràcies a Supabase Realtime (websockets). Quan la recepcionista toca + o −, totes les finestres obertes de la vista pública es refresquen en menys d'1 segon.
+
+7.4 Flux d'autenticació admin
+	•	Recepcionista fa clic al botó d'admin de la pàgina principal.
+	•	Redirigeix a /admin/login amb formulari de contrasenya.
+	•	El formulari fa POST a /api/auth/login amb la contrasenya.
+	•	El servidor compara amb ADMIN_PASSWORD (variable d'entorn).
+	•	Si correcta: crea cookie httpOnly segura i redirigeix a /admin.
+	•	Si incorrecta: retorna error 401 i incrementa el comptador d'intents.
+	•	A /admin, cada petició verifica la cookie al servidor (middleware Next.js).
+	•	El botó de logout fa POST a /api/auth/logout, destrueix la cookie i redirigeix a /.
+
+8. Estructura del projecte (Next.js)
+Ruta / Fitxer
+Descripció
+app/page.tsx
+Vista pública — aforament en directe + botó admin
+app/info/page.tsx
+Vista pública — informació, preus i calendari
+app/admin/login/page.tsx
+Formulari de login per a recepcionistes
+app/admin/page.tsx
+Panel d'administració (protegit)
+app/api/auth/login/route.ts
+POST — valida contrasenya, crea cookie de sessió
+app/api/auth/logout/route.ts
+POST — destrueix la cookie de sessió
+app/api/session/route.ts
+GET sessió actual / POST obrir·tancar sessió
+app/api/count/route.ts
+PATCH — incrementar o decrementar comptador
+middleware.ts
+Protecció de les rutes /admin (verifica cookie)
+lib/supabase.ts
+Client de Supabase (singleton)
+lib/auth.ts
+Helpers de validació de sessió
+components/StatusBadge.tsx
+Semàfor visual (verd / taronja / vermell / gris)
+components/CounterDisplay.tsx
+Comptador gran X / 20
+components/AdminButtons.tsx
+Botons + / − del panel admin
+.env.local
+Variables d'entorn locals (no es puja a GitHub)
+
+9. Variables d'entorn
+Variable
+Descripció
+NEXT_PUBLIC_SUPABASE_URL
+URL del projecte Supabase (visible al client)
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+Clau pública de Supabase (visible al client)
+SUPABASE_SERVICE_ROLE_KEY
+Clau privada de Supabase (només servidor)
+ADMIN_PASSWORD
+Contrasenya d'accés al panel de recepció
+SESSION_SECRET
+Secret per signar la cookie de sessió (mínim 32 caràcters)
+Totes les variables s'han d'afegir a Vercel (Settings → Environment Variables). La variable ADMIN_PASSWORD mai s'ha de pujar a GitHub ni incloure al codi font.
+
+10. Flux de treball i desplegament
+10.1 Configuració inicial (una sola vegada)
+	•	Crear repositori a GitHub i clonar-lo a Antigravity.
+	•	Crear projecte a Supabase → copiar URL i claus.
+	•	Executar les migracions SQL per crear les taules sessions i capacity_log.
+	•	Activar Realtime a Supabase per a la taula sessions.
+	•	Crear projecte a Vercel → connectar el repositori de GitHub.
+	•	Afegir les 5 variables d'entorn a Vercel.
+	•	Primer deploy automàtic en fer push a la branca main.
+
+10.2 Flux de desenvolupament diari
+	•	Desenvolupar en local: npx next dev
+	•	Fer push a GitHub → Vercel desplega automàticament en 1-2 minuts.
+	•	Les PRs generen preview deployments amb URL pròpia per testar.
+
+11. Criteris d'acceptació (MVP)
+ID
+Funcionalitat
+Criteri
+Prioritat
+AC-01
+Aforament en directe
+Mostra X/20 actualitzat en <1s sense recarregar
+Alta
+AC-02
+Semàfor
+Canvia color correctament: verd/taronja/vermell/gris
+Alta
+AC-03
+Botó admin visible
+La pàgina pública té un botó d'accés al login admin
+Alta
+AC-04
+Login correcte
+Contrasenya vàlida → cookie creada → redirigeix a /admin
+Alta
+AC-05
+Login incorrecte
+Contrasenya errònia → error visible, no entra
+Alta
+AC-06
+Bloqueig d'intents
+Després de 5 intents fallits, bloqueig de 5 minuts
+Mitjana
+AC-07
+Panel — entrada
+Botó + incrementa comptador i es registra a capacity_log
+Alta
+AC-08
+Panel — sortida
+Botó − decrementa comptador, no passa de 0
+Alta
+AC-09
+Límit màxim
+El botó + es desactiva quan hi ha 20 famílies
+Alta
+AC-10
+Registre a Supabase
+Cada + i − crea una fila a capacity_log amb timestamp
+Alta
+AC-11
+Logout
+El logout destrueix la cookie i redirigeix a /
+Alta
+AC-12
+Protecció /admin
+Accedir a /admin sense cookie redirigeix a /admin/login
+Alta
+AC-13
+Sessió oberta/tancada
+Fora d'horari o sense obrir, la pàgina mostra 'Tancat'
+Alta
+AC-14
+Mòbil
+Tota la interfície és usable en pantalla de 375px
+Alta
+AC-15
+Desplegament
+La URL de Vercel és pública i funciona sense errors
+Alta
+
+12. Roadmap
+Fase
+Contingut
+Estimació
+v1.0 — MVP
+Vista pública + semàfor + login admin + panel recepció + registre Supabase + deploy Vercel
+1-2 setmanes
+v1.1
+Pàgina d'informació: preus, horaris, calendari tancaments
+3-5 dies
+v1.2
+Historial: gràfica d'ocupació per franja horària de sessions passades
+1 setmana
+v2.0
+Dashboard admin: estadístiques agregades, exportació CSV
+A definir
+
+13. Riscos i mitigació
+Risc
+Impacte
+Mitigació
+Recepcionista oblida obrir la sessió
+Semàfor en gris tot el dia
+Recordatori visible al panel si és divendres i la sessió no s'ha obert
+Contrasenya filtrada
+Tercers modifiquen el comptador
+Canviar ADMIN_PASSWORD a Vercel (redeploy automàtic)
+Supabase Realtime falla
+La pàgina no s'actualitza en temps real
+Fallback: polling cada 15 segons si el websocket cau
+Comptador incorrecte per error manual
+Les famílies veuen dades errònies
+Botó de correcció manual + event registrat a capacity_log
+Accés no autoritzat al panel
+Manipulació del comptador
+Cookie httpOnly + bloqueig per intents + middleware de protecció
+
+14. Glossari
+	•	Aforament: nombre màxim de famílies simultànies a l'espai (20 en v1.0).
+	•	Sessió: cada divendres de 16:30 a 19:00 h en que l'espai és obert.
+	•	Semàfor: indicador visual de color que representa el nivell d'ocupació.
+	•	capacity_log: taula de Supabase que registra cada entrada i sortida amb timestamp.
+	•	Cookie httpOnly: cookie de sessió que no és accessible des de JavaScript, més segura.
+	•	MVP: Minimum Viable Product — versió mínima funcional per validar el concepte.
+	•	CD (Continuous Deployment): desplegament automàtic a producció en fer push a main.
+	•	Supabase Realtime: sistema de websockets que notifica canvis a la BD sense recarregar.
+	•	Middleware Next.js: codi que s'executa abans de cada petició per verificar l'autenticació.
