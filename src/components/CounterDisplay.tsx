@@ -24,7 +24,7 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
   const isGoingUp = currentCount >= prevCount;
 
   return (
-    <div className="relative flex items-center justify-center p-2 text-current w-[200px] h-[200px] sm:w-[220px] sm:h-[220px]">
+    <div className="relative mx-auto flex items-center justify-center text-current w-[200px] h-[200px] sm:w-[220px] sm:h-[220px]">
       <svg
         height="100%"
         width="100%"
@@ -78,7 +78,7 @@ export const CounterDisplay: React.FC<CounterDisplayProps> = ({ currentCount, ma
 
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {/* Main Number - Dead Center */}
-        <div className="flex items-center justify-center overflow-hidden h-[80px] sm:h-[100px]">
+        <div className="flex items-center justify-center overflow-hidden h-[120px] sm:h-[140px] w-full">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={currentCount}
