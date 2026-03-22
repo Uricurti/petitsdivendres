@@ -72,7 +72,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="h-[100dvh] w-full flex flex-col p-3 sm:p-6 overflow-hidden text-white relative">
+    <main className="min-h-[100dvh] w-full flex flex-col p-3 sm:p-6 overflow-y-auto text-white relative">
       <div className={`absolute inset-0 z-[-1] transition-colors duration-700 ${screenBg}`} />
 
       {/* Header */}
